@@ -25,5 +25,5 @@ export const useGetTodos = () => {
     }
   };
 
-  return { todos, loading, error };
+  return { todos, loading, error, fetchTodos };
 };

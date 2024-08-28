@@ -11,7 +11,7 @@ const TodoPage = () => {
 
   const handleCreateTodo = async (todoBody: string) => {
     await postTodo(todoBody);
-    fetchTodos()
+    fetchTodos();
 
   };
 
