@@ -65,7 +65,7 @@ func main() {
 
 	app.Get("/api/todos", getTodos)
 	app.Post("/api/todos", createTodo)
-	app.Patch("api/todos/:id", updateTodo)
+	app.Put("api/todos/:id", setTodoCompletionStatus)
 	app.Delete("api/todos/:id", deleteTodo)
 
 	port := os.Getenv("PORT")
@@ -122,26 +122,32 @@ func createTodo(c *fiber.Ctx) error {
 	return c.Status(201).JSON(todo)
  }
 
-// update a todo
-func updateTodo (c *fiber.Ctx) error {
-	id := c.Params("id")
-	objectID, err := primitive.ObjectIDFromHex(id)
+ // toggle completion status
+func setTodoCompletionStatus(c *fiber.Ctx) error {
+    id := c.Params("id")
+    objectID, err := primitive.ObjectIDFromHex(id)
 
-	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
-	}
+    if err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
+    }
+    type RequestBody struct {
+        Completed bool `json:"completed"`
+    }
 
-	filter := bson.M{"_id": objectID}
-	update := bson.M{"$set": bson.M{"completed": true}}
+    var body RequestBody
+    if err := c.BodyParser(&body); err != nil {
+        return c.Status(400).JSON(fiber.Map{"error": "Invalid request body"})
+    }
+    filter := bson.M{"_id": objectID}
+    update := bson.M{"$set": bson.M{"completed": body.Completed}}
 
-	_, err = collection.UpdateOne(context.Background(), filter, update)
-	if err != nil {
-		return err
-	}
+    _, err = collection.UpdateOne(context.Background(), filter, update)
+    if err != nil {
+        return err
+    }
 
-	return c.Status(200).JSON(fiber.Map{"success": true})
+    return c.Status(200).JSON(fiber.Map{"success": true})
 }
-
 
 // delete a todo
 func deleteTodo(c *fiber.Ctx) error {

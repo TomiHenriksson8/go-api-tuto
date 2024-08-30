@@ -5,7 +5,9 @@ export interface Todo {
 }
 
 export interface TodoListProps {
-    todos: Todo[];
-    loading: boolean;
-    error: string | null;
-  }
+  todos: Todo[];
+  loading: boolean;
+  error: string | null;
+  onUpdateTodo: (updatedTodo: Todo) => void;
+  onDeleteTodo: (todo: Todo) => void;
+}
