@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { logout } from "../utils/utils";
 
 interface TodoFormProps {
   onCreate: (todoBody: string) => Promise<void>; // The function to create a new todo
@@ -8,6 +10,8 @@ interface TodoFormProps {
 
 const TodoForm: React.FC<TodoFormProps> = ({ onCreate, loading, error }) => {
   const [todoBody, setTodoBody] = useState<string>("");
+
+  const token = localStorage.getItem('token')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +34,10 @@ const TodoForm: React.FC<TodoFormProps> = ({ onCreate, loading, error }) => {
           {loading ? "Adding..." : "Add"}
         </button>
       </form>
+      {token && (
+        <button className="bg-slate-400 border border-bg-slate-600 px-3 py-2 rounded-md hover:border-slate-400 text-[16px] cursor-pointer" onClick={logout}>Logout</button>
+      )}
+
       {error && <div className="text-red-500 ">Error adding todo: {error}</div>}
     </div>
   );

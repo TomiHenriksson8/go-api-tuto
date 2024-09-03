@@ -6,12 +6,16 @@ export const useDeleteTodo = () => {
   const [error, setError] = useState<string | null>(null);
 
   const deleteTodo = async (todo: Todo) => {
+    const token = localStorage.getItem('token')
     setLoading(true)
     setError(null)
     try {
       const url = `http://localhost:3000/api/todos/${todo._id}`
       const response = await fetch(url, {
         method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       if (!response.ok) {
         throw new Error('Error deleting todo')

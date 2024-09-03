@@ -11,8 +11,18 @@ export const useGetTodos = () => {
   }, []);
 
   const fetchTodos = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found. please login first')
+    }
     try {
-      const response = await fetch("http://localhost:3000/api/todos");
+      const response = await fetch("http://localhost:3000/api/todos", {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       if (!response.ok) {
         throw new Error("Failed to fetch todos");
       }

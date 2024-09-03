@@ -6,6 +6,7 @@ export const useUpdateTodos = () => {
   const [error, setError] = useState<string | null>(null);
 
   const updateTodos = async (todo: Todo) => {
+    const token = localStorage.getItem('token')
     setLoading(true);
     try {
       const url = `http://localhost:3000/api/todos/${todo._id}`;
@@ -15,7 +16,8 @@ export const useUpdateTodos = () => {
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
             completed: updatedCompletedStatus

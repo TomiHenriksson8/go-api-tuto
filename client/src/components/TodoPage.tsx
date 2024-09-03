@@ -5,11 +5,14 @@ import { useCreateTodo } from "../hooks/useCreateTodo";
 import { useEffect, useState } from "react";
 import { Todo } from "../types/Todo";
 import { useDeleteTodo } from "../hooks/useDeleteTodo";
+import Welcome from "./Welcome";
 
 const TodoPage = () => {
   const { todos, fetchTodos, loading: todosLoading, error: todosError } = useGetTodos();
   const { postTodo, loading: createLoading, error: createError } = useCreateTodo();
   const { deleteTodo, loading: deleteLoading, error: deleteError } = useDeleteTodo()
+
+  const token = localStorage.getItem('token')
 
   const [localTodos, setLocalTodos] = useState<Todo[]>([]);
 
@@ -38,9 +41,19 @@ const TodoPage = () => {
   }
 
   return (
+
     <div>
-      <TodoForm onCreate={handleCreateTodo} loading={createLoading} error={createError} />
-      <TodoList todos={localTodos} loading={todosLoading} error={todosError} onUpdateTodo={handleUpdateTodo} onDeleteTodo={handleDeleteTodo} />
+      {token ? (
+        <>
+          <TodoForm onCreate={handleCreateTodo} loading={createLoading} error={createError} />
+          <TodoList todos={localTodos} loading={todosLoading} error={todosError} onUpdateTodo={handleUpdateTodo} onDeleteTodo={handleDeleteTodo} />
+        </>
+      )  : (
+        <>
+          <Welcome />
+        </>
+      )}
+
     </div>
   );
 };
