@@ -15,6 +15,10 @@ func JWTProtected() fiber.Handler {
 					return c.Status(401).JSON(fiber.Map{"error": "Missing or malformed JWT"})
 			}
 
+			if len(tokenString) > 7 && tokenString[:7] == "Bearer " {
+				tokenString = tokenString[7:]
+		}
+
 			token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 							return nil, fiber.NewError(fiber.StatusUnauthorized, "Unexpected signing method")

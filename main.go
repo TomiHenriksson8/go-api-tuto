@@ -1,16 +1,19 @@
 package main
 
 import (
-    "log"
-    "os"
+	"log"
+	"os"
 
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/swaggo/fiber-swagger"
+	_ "github.com/TomiHenriksson8/go-api-tuto/docs"
 
-    "github.com/TomiHenriksson8/go-api-tuto/config"
-    "github.com/TomiHenriksson8/go-api-tuto/db"
-    "github.com/TomiHenriksson8/go-api-tuto/routes"
+	"github.com/TomiHenriksson8/go-api-tuto/config"
+	"github.com/TomiHenriksson8/go-api-tuto/db"
+	"github.com/TomiHenriksson8/go-api-tuto/routes"
 )
+
 
 func main() {
     err := config.LoadEnv()
@@ -28,8 +31,10 @@ func main() {
 
     app.Use(cors.New(cors.Config{
         AllowOrigins: "http://localhost:5173",
-        AllowHeaders: "Origin, Content-Type, Accept",
+				AllowHeaders: "Origin, Content-Type, Accept, Authorization",
     }))
+
+		app.Get("/api/swagger/*", fiberSwagger.WrapHandler)
 
     routes.SetupRoutes(app, db)
 

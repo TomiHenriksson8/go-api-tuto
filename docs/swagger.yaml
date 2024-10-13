@@ -1,0 +1,228 @@
+definitions:
+  models.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.Todo:
+    properties:
+      _id:
+        type: string
+      body:
+        type: string
+      completed:
+        type: boolean
+      createdAt:
+        type: string
+      userID:
+        type: string
+    type: object
+  models.TodoCompletionRequest:
+    properties:
+      completed:
+        type: boolean
+    type: object
+  models.User:
+    properties:
+      id:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user by validating the username and password, then
+        return a JWT token.
+      parameters:
+      - description: Login Data
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/models.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login a user and return a JWT token
+      tags:
+      - auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user by providing a username and password. The password
+        is hashed before storing.
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a new user
+      tags:
+      - auth
+  /todos:
+    get:
+      description: Retrieve todos for the logged-in user, sorted by creation date.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Todo'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get list of todos
+      tags:
+      - todos
+    post:
+      consumes:
+      - application/json
+      description: Create a new todo item for the logged-in user.
+      parameters:
+      - description: New Todo
+        in: body
+        name: todo
+        required: true
+        schema:
+          $ref: '#/definitions/models.Todo'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Todo'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new todo
+      tags:
+      - todos
+  /todos/{id}:
+    delete:
+      description: Delete a specific todo item by its ID.
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Delete a todo by ID
+      tags:
+      - todos
+    patch:
+      consumes:
+      - application/json
+      description: Update the completion status of a specific todo item by its ID.
+      parameters:
+      - description: Todo ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Completion Status
+        in: body
+        name: completion
+        required: true
+        schema:
+          $ref: '#/definitions/models.TodoCompletionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Update the completion status of a todo
+      tags:
+      - todos
+swagger: "2.0"
